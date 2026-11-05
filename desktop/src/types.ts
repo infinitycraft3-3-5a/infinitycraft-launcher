@@ -80,8 +80,18 @@ export interface Settings {
   repo: string;
   tag_hint: string;
   realmline: string;
+  server_host: string;
+  server_port: number;
   version_json_url: string;
   github_token: string;
+}
+
+export interface ServerStatus {
+  online: boolean;
+  host: string;
+  port: number;
+  latency_ms: number | null;
+  error: string | null;
 }
 
 export interface LaunchResult {

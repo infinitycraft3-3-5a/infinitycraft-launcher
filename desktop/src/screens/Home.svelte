@@ -3,7 +3,7 @@
   import { listen } from "@tauri-apps/api/event";
   import { open } from "@tauri-apps/plugin-dialog";
   import { onMount, onDestroy } from "svelte";
-  import type { CheckResult, ProgressEvent, Settings } from "../types";
+  import type { CheckResult, ProgressEvent, ServerStatus, Settings } from "../types";
 
   interface Props {
     check: CheckResult | null;
@@ -60,6 +60,7 @@
   let progress = $state<ProgressEvent | null>(null);
   let showDone = $state(false);
   let doneTimer: ReturnType<typeof setTimeout> | undefined;
+  let serverStatus = $state<ServerStatus | null>(null);
   let busy = $derived(
     phase === "checking" ||
     phase === "updating" || phase === "repairing" || phase === "launching"
@@ -72,13 +73,24 @@
   }
 
   let unlisten: (() => void) | null = null;
+  let serverTimer: ReturnType<typeof setInterval> | undefined;
   onMount(async () => {
     unlisten = await listen<ProgressEvent>("update-progress", (e) => {
       progress = e.payload;
     });
+    async function pollServer() {
+      try {
+        serverStatus = await invoke<ServerStatus>("server_status");
+      } catch (e) {
+        serverStatus = { online: false, host: "—", port: 0, latency_ms: null, error: String(e) };
+      }
+    }
+    await pollServer();
+    serverTimer = setInterval(pollServer, 15000);
   });
   onDestroy(() => {
     if (unlisten) unlisten();
+    if (serverTimer) clearInterval(serverTimer);
   });
 
   // ── Snow ──
@@ -259,6 +271,17 @@
       {/if}
     </div>
 
+    {#if serverStatus}
+      <div class="status" class:server-off={!serverStatus.online}
+        title={(serverStatus.online ? "" : (serverStatus.error ?? "")) + " (" + serverStatus.host + ":" + serverStatus.port + ")"}>
+        {#if serverStatus.online}
+          <span class="dot ok"></span> Serveur en ligne{#if serverStatus.latency_ms !== null} · {serverStatus.latency_ms} ms{/if}
+        {:else}
+          <span class="dot off"></span> Serveur hors ligne
+        {/if}
+      </div>
+    {/if}
+
     <div class="panel-status">
       {#if showDone}
         <p class="done">Install terminé</p>
@@ -411,6 +434,11 @@
     padding: 6px 14px; border-radius: 999px;
     background: rgba(74,222,128,.06); border: 1px solid rgba(74,222,128,.22);
     color: #86efac; font-size: .88rem; font-weight: 500;
+    margin-top: 2px;
+  }
+  .status.server-off {
+    background: rgba(239,68,68,.07); border-color: rgba(239,68,68,.28);
+    color: #fca5a5;
   }
   .dot { width: 9px; height: 9px; border-radius: 50%; }
   .dot.ok { background: #4ade80; box-shadow: 0 0 10px #4ade80; animation: pulse 2s ease-in-out infinite; }

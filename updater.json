@@ -1,7 +1,7 @@
 {
-  "version": "1.0.1",
-  "notes": "Launcher 1.0.1 — first auto-updater release.",
-  "pub_date": "2026-11-05T21:07:00+00:00",
-  "url": "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/releases/1.0.1/InfinityCraft_1.0.1_x64-setup.exe",
-  "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTazR4bEZRVUM2V0FXb1ZYQWRKUExGSFJIUG1EdTFDaURGVWV5OW5xZ3E3NWtsYUR5QVZNNmtqb1dlVkNNVWFLZ3dabDYvaDRpdkVNODA3bTc4cjVmaHc1RlE2Y29pa3dZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkzOTA5MjEwCWZpbGU6SW5maW5pdHlDcmFmdF8xLjAuMV94NjQtc2V0dXAuZXhlCXZlcnNpb246MS4wLjEKbEpPaHY1aEtRdUVMOHJCd2ZxbDdRQ0F1eG9QcTVlYzRveC9yK2xpTHhkZFd4ak84R2ZvUjYvNWRaekpKbERETHh0M0Z1MGg0K21aUlUwN2dtanhUQnc9PQo="
+  "version": "1.0.2",
+  "notes": "Indicateur d'état du serveur (vert=online / rouge=offline).",
+  "pub_date": "2026-11-05T00:00:00Z",
+  "url": "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/releases/1.0.2/InfinityCraft-Launcher-v1.0.2.exe",
+  "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTazR4bEZRVUM2V0VObXVnNi9lUEYxN2I2WjdqN3gvalZkdlBuSVZBSUg4b0xzWCtBZU5zWThBQWhiS3M1R0ZHRVZhaCtlMnpyUVI4cWhSRVpsSFJPanJyVzdGK2xjK1FFPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkzOTEyNDQwCWZpbGU6SW5maW5pdHlDcmFmdC1MYXVuY2hlci12MS4wLjIuZXhlCXZlcnNpb246MS4wLjIKVDdqakJncm5wRnplWmluVFR4NTYyTVdKclUySjdRZ0ZzY0JEeXZER21DUWlGTnY5Q09iY0ZWVC9saHpaYk1qWDBGN3hsUWROVXluQXVzZmcyWXNmQWc9PQo="
 }

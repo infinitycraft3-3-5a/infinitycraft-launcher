@@ -132,7 +132,8 @@ pub fn run() {
             resume_download,
             launcher_update_status,
             launcher_update_install,
-            commands::launch::launch_game
+            commands::launch::launch_game,
+            commands::server::server_status
         ])
         .on_window_event(|_win, event| match event {
             tauri::WindowEvent::CloseRequested { .. } => {

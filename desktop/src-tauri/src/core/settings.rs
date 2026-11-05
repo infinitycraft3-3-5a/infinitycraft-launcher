@@ -20,6 +20,10 @@ pub struct Settings {
     pub tag_hint: String,
     #[serde(default = "def_realmline")]
     pub realmline: String,
+    #[serde(default = "def_server_host")]
+    pub server_host: String,
+    #[serde(default = "def_server_port")]
+    pub server_port: u16,
     #[serde(default)]
     pub version_json_url: String,
     #[serde(default)]
@@ -41,6 +45,12 @@ fn def_repo() -> String {
 fn def_realmline() -> String {
     "InfinityCraft".into()
 }
+fn def_server_host() -> String {
+    "127.0.0.1".into()
+}
+fn def_server_port() -> u16 {
+    3724
+}
 fn def_install() -> String {
     "C:\\Program Files\\InfinityCraft 3.3.5a".into()
 }
@@ -56,6 +66,8 @@ impl Default for Settings {
             repo: def_repo(),
             tag_hint: String::new(),
             realmline: def_realmline(),
+            server_host: def_server_host(),
+            server_port: def_server_port(),
             version_json_url: String::new(),
             github_token: String::new(),
         }
