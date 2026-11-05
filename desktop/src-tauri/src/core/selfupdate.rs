@@ -208,10 +208,10 @@ fn do_replace(
          $new   = '{}'\n\
          $final = '{}'\n\
          $ps1   = '{}'\n\
-         $pid   = {};\n\
-         $done  = $false;\n\
-         try {{\n\
-           while (Get-Process -Id $pid -ErrorAction SilentlyContinue) {{ Start-Sleep -Milliseconds 250 }}\n\
+         $target_pid = {};\n\
+          $done  = $false;\n\
+          try {{\n\
+            while (Get-Process -Id $target_pid -ErrorAction SilentlyContinue) {{ Start-Sleep -Milliseconds 250 }}\n\
            Start-Sleep -Milliseconds 800\n\
            if (Test-Path -LiteralPath $final) {{ Remove-Item -LiteralPath $final -Force -ErrorAction SilentlyContinue }}\n\
            Move-Item -LiteralPath $new -Destination $final -Force\n\
