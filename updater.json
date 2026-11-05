@@ -1,7 +1,7 @@
 {
     "url":  "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/releases/1.0.6/InfinityCraft_Launcher_v1.0.6.exe",
-    "sha256":  "cc6391d1decb6c8f418a0d4a86f7ff3ca7b6259551da3cbbd84690b1219e64c0",
-    "pub_date":  "2026-11-06T01:00:00Z",
+    "sha256":  "86470bdfc0b21b702bce86cf35e73d92f000dc79a63247cc38338e8922fc6ddb",
+    "pub_date":  "2026-11-06T01:30:00Z",
     "version":  "1.0.6",
-    "notes":  "Mise a jour automatique maintenant detectee et appliquee (correction)."
+    "notes":  "Mise a jour sur clic (plus auto), nettoyage des fichiers temporaires, re-lancement automatique."
 }

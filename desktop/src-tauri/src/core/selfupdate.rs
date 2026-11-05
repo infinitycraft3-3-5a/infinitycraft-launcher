@@ -108,6 +108,22 @@ pub async fn launcher_selfupdate_run(info: SelfupdateInfo) -> Result<(), String>
         .ok_or_else(|| "dir du lanceur inconnu".to_string())?;
     let old_path = exe.clone();
 
+    // Nettoyage des résidus d'une éventuelle mise à jour interrompue
+    // (fichiers ic_selfupdate_*.ps1 et ic_selfupdate_new.*).
+    let _ = tokio::task::spawn_blocking({
+        let d = dir.clone();
+        move || {
+            use std::fs::read_dir;
+            for entry in read_dir(&d).into_iter().flatten().flatten() {
+                let name = entry.file_name().to_string_lossy().to_string();
+                if name.starts_with("ic_selfupdate_") {
+                    let _ = std::fs::remove_file(entry.path());
+                }
+            }
+        }
+    })
+    .await;
+
     // 2. On télécharge dans le même dossier (fichier .part dédié).
     let part_path: PathBuf = dir.join(format!("ic_selfupdate_new.{}", std::process::id()));
     let _ = tokio::fs::remove_file(&part_path).await;
@@ -191,19 +207,26 @@ fn do_replace(
          $old   = '{}'\n\
          $new   = '{}'\n\
          $final = '{}'\n\
+         $ps1   = '{}'\n\
          $pid   = {};\n\
-         while (Get-Process -Id $pid -ErrorAction SilentlyContinue) {{ Start-Sleep -Milliseconds 250 }}\n\
-         Start-Sleep -Milliseconds 500\n\
-         if (Test-Path -LiteralPath $final) {{ Remove-Item -LiteralPath $final -Force -ErrorAction SilentlyContinue }}\n\
-         Move-Item -LiteralPath $new -Destination $final -Force\n\
-         Remove-Item -LiteralPath $old -Force -ErrorAction SilentlyContinue\n\
-         Start-Process -FilePath $final\n\
-         Remove-Item -LiteralPath '{}' -Force -ErrorAction SilentlyContinue\n",
+         $done  = $false;\n\
+         try {{\n\
+           while (Get-Process -Id $pid -ErrorAction SilentlyContinue) {{ Start-Sleep -Milliseconds 250 }}\n\
+           Start-Sleep -Milliseconds 800\n\
+           if (Test-Path -LiteralPath $final) {{ Remove-Item -LiteralPath $final -Force -ErrorAction SilentlyContinue }}\n\
+           Move-Item -LiteralPath $new -Destination $final -Force\n\
+           Remove-Item -LiteralPath $old  -Force -ErrorAction SilentlyContinue\n\
+           $done = $true\n\
+           Start-Process -FilePath $final\n\
+         }} finally {{\n\
+           if (Test-Path -LiteralPath $new) {{ Remove-Item -LiteralPath $new -Force -ErrorAction SilentlyContinue }}\n\
+           Remove-Item -LiteralPath $ps1  -Force -ErrorAction SilentlyContinue\n\
+         }}\n",
         esc(old_path),
         esc(part),
         esc(&final_path),
-        pid,
-        esc(&ps1)
+        esc(&ps1),
+        pid
     );
 
     std::fs::create_dir_all(dir).map_err(|e| format!("mkdir dir failed: {e}"))?;

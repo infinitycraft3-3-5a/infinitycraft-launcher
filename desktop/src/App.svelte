@@ -19,7 +19,6 @@
       const u = await invoke<LauncherUpdate>("launcher_selfupdate_check");
       if (u.available) {
         launcherUpdate = u;
-        await runSelfUpdate(u);
       }
     } catch {
       launcherUpdate = null;
