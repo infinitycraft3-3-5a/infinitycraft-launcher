@@ -1,7 +1,7 @@
 {
-  "version": "1.0.5",
-  "notes": "Barre de progression intégrée entre les boutons, espacement constant.",
-  "pub_date": "2026-11-06T00:05:00Z",
-  "url": "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/releases/1.0.5/InfinityCraft_Launcher_v1.0.5.exe",
-  "sha256": "494e31fdd7862d7cf7464a4cfa0d0b92a09f650c9e106cf9755fba5a79cb6465"
+    "url":  "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/releases/1.0.6/InfinityCraft_Launcher_v1.0.6.exe",
+    "sha256":  "cc6391d1decb6c8f418a0d4a86f7ff3ca7b6259551da3cbbd84690b1219e64c0",
+    "pub_date":  "2026-11-06T01:00:00Z",
+    "version":  "1.0.6",
+    "notes":  "Mise a jour automatique maintenant detectee et appliquee (correction)."
 }

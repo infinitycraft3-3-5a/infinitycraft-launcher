@@ -92,6 +92,8 @@ pub fn run() {
             commands::install::repair_client,
             pause_download,
             resume_download,
+            launcher_selfupdate_check,
+            launcher_selfupdate_run,
             commands::launch::launch_game,
             commands::server::server_status
         ])
