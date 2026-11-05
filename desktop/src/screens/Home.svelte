@@ -305,9 +305,8 @@
       {label}
     </button>
 
-    {#if phase === "updating" || phase === "repairing"}
-      <div class="progress-wrap">
-        {#if progress}
+    <div class="progress-wrap" class:hidden={!(phase === "updating" || phase === "repairing")}>
+      {#if progress}
           <div class="progress-track">
             <div class="progress-fill" style="width: {progress.percent}%"></div>
           </div>
@@ -333,8 +332,7 @@
         {:else}
           <div class="progress-meta">Préparation du téléchargement…</div>
         {/if}
-      </div>
-    {/if}
+    </div>
 
     {#if showDone}
       <span class="done">Install terminé</span>
@@ -526,6 +524,7 @@
     flex: 1 1 auto; min-width: 220px; max-width: 520px;
     display: flex; flex-direction: column; gap: 4px;
   }
+  .progress-wrap.hidden { visibility: hidden; }
   .progress-track { height: 8px; background: #1a1f2e; border: 1px solid #232a44; border-radius: 4px; overflow: hidden; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, #3a5bd9, #6b8cff); transition: width 0.2s; }
   .progress-meta { display: flex; justify-content: space-between; font-size: 11px; color: #6b7188; gap: 12px; }

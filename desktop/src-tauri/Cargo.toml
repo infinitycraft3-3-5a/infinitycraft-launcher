@@ -1,6 +1,6 @@
 [package]
 name = "infinitycraft-launcher"
-version = "1.0.4"
+version = "1.0.5"
 description = "InfinityCraft Launcher (Tauri 2 backend)"
 authors = ["InfinityCraft"]
 edition = "2021"
@@ -33,5 +33,6 @@ strip = true
 lto = true
 codegen-units = 1
 panic = "abort"
+
 
 

@@ -1,6 +1,6 @@
 {
   "name": "infinitycraft-launcher",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "type": "module",
   "description": "InfinityCraft Launcher (Tauri 2 + Svelte 5)",
@@ -23,5 +23,6 @@
     "vite": "^6.0.0"
   }
 }
+
 
 
