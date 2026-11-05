@@ -1,7 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "InfinityCraft",
-  "version": "1.0.2",
+  "mainBinaryName": "InfinityCraft_Launcher_v1.0.4",
+  "version": "1.0.4",
   "identifier": "app.infinitycraft.launcher",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -26,14 +27,6 @@
     ],
     "security": {
       "csp": null
-    }
-  },
-  "plugins": {
-    "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU4QkE0MDQxNDUxOUUzQTQKUldTazR4bEZRVUM2V0tFa1EzRWdYYXBGT2RYOGxVd3RNVDY5NWxiM0ZpVkVMdXMwVFdTRHBsTFAK",
-      "endpoints": [
-        "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/updater.json"
-      ]
     }
   },
   "bundle": {

@@ -1,6 +1,6 @@
 [package]
 name = "infinitycraft-launcher"
-version = "1.0.2"
+version = "1.0.4"
 description = "InfinityCraft Launcher (Tauri 2 backend)"
 authors = ["InfinityCraft"]
 edition = "2021"
@@ -27,7 +27,6 @@ urlencoding = "2"
 chrono = { version = "0.4", features = ["serde"] }
 tauri-plugin-single-instance = "2"
 tauri-plugin-dialog = "2"
-tauri-plugin-updater = "2"
 
 [profile.release]
 strip = true

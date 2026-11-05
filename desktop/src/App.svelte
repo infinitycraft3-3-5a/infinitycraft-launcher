@@ -13,26 +13,28 @@
 
   let launcherUpdate = $state<LauncherUpdate | null>(null);
   let updatingLauncher = $state(false);
-  let launcherDismissed = $state(false);
 
   async function checkLauncherUpdate() {
     try {
-      const u = await invoke<LauncherUpdate>("launcher_update_status");
-      if (u.available) launcherUpdate = u;
+      const u = await invoke<LauncherUpdate>("launcher_selfupdate_check");
+      if (u.available) {
+        launcherUpdate = u;
+        await runSelfUpdate(u);
+      }
     } catch {
       launcherUpdate = null;
     }
   }
 
-  async function installLauncherUpdate() {
+  async function runSelfUpdate(u: LauncherUpdate) {
     if (updatingLauncher) return;
     updatingLauncher = true;
-    launcherUpdate = null;
+    launcherUpdate = u;
     try {
-      await invoke("launcher_update_install");
+      await invoke("launcher_selfupdate_run", { info: u });
+      // le process est relancé par le helper ; on ne revient pas ici.
     } catch (e) {
       updatingLauncher = false;
-      launcherDismissed = false;
       launcherUpdate = null;
       showError(String(e));
     }
@@ -80,15 +82,17 @@
   </button>
 </div>
 
-{#if launcherUpdate && !launcherDismissed}
+{#if launcherUpdate}
   <div class="updater-banner" role="status" aria-live="polite">
     <div class="updater-text">
-      <div class="updater-title">Nouvelle version du lanceur disponible</div>
-      <div class="updater-sub">Version {launcherUpdate.version} — mettez à jour avant de jouer.</div>
+      <div class="updater-title">{#if updatingLauncher}Mise à jour du lanceur en cours…{:else}Nouvelle version du lanceur disponible{/if}</div>
+      <div class="updater-sub">Version {launcherUpdate.version} — le lanceur se remplace tout seul, il se relancera ensuite.</div>
     </div>
     <div class="updater-actions">
-      <button class="updater-dismiss" onclick={() => (launcherDismissed = true)} disabled={updatingLauncher}>Plus tard</button>
-      <button class="updater-cta" onclick={installLauncherUpdate} disabled={updatingLauncher}>
+      <button
+        class="updater-cta"
+        onclick={() => runSelfUpdate(launcherUpdate)}
+        disabled={updatingLauncher}>
         {#if updatingLauncher}
           Mise à jour…
         {:else}
@@ -150,12 +154,6 @@
   .updater-title { font-size: 13px; font-weight: 600; color: #dfe6ff; letter-spacing: .2px; }
   .updater-sub { font-size: 11px; color: #9aa4c8; margin-top: 2px; }
   .updater-actions { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
-  .updater-dismiss {
-    padding: 7px 12px; font-size: 12px; color: #aab2bf;
-    background: rgba(255,255,255,.03); border: 1px solid #2c3644; border-radius: 6px; cursor: pointer;
-  }
-  .updater-dismiss:hover { color: #e6e8ee; border-color: #5568c9; }
-  .updater-dismiss:disabled { opacity: .5; cursor: default; }
   .updater-cta {
     padding: 7px 16px; font-size: 12.5px; font-weight: 700; color: #fff;
     background: linear-gradient(180deg, #3a5bd9 0%, #243a86 100%);

@@ -103,4 +103,6 @@ export interface LaunchResult {
 export interface LauncherUpdate {
   available: boolean;
   version: string;
+  url: string;
+  sha256: string;
 }

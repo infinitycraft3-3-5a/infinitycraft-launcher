@@ -33,44 +33,7 @@ fn resume_download(state: tauri::State<'_, AppState>) {
     state.transfer.set_paused(false);
 }
 
-#[derive(serde::Serialize)]
-struct LauncherUpdateInfo {
-    available: bool,
-    version: String,
-}
-
-#[tauri::command]
-async fn launcher_update_status(app: tauri::AppHandle) -> Result<LauncherUpdateInfo, String> {
-    use tauri_plugin_updater::UpdaterExt;
-    let updater = app.updater().map_err(|e| e.to_string())?;
-    match updater.check().await.map_err(|e| e.to_string())? {
-        Some(u) => Ok(LauncherUpdateInfo {
-            available: true,
-            version: u.version.to_string(),
-        }),
-        None => Ok(LauncherUpdateInfo {
-            available: false,
-            version: String::new(),
-        }),
-    }
-}
-
-#[tauri::command]
-async fn launcher_update_install(app: tauri::AppHandle) -> Result<(), String> {
-    use tauri_plugin_updater::UpdaterExt;
-    let updater = app.updater().map_err(|e| e.to_string())?;
-    let update = updater
-        .check()
-        .await
-        .map_err(|e| e.to_string())?
-        .ok_or_else(|| "Aucune mise à jour disponible".to_string())?;
-    update
-        .download_and_install(|_chunk, _total| {}, || {})
-        .await
-        .map_err(|e| e.to_string())?;
-    app.restart();
-    Ok(())
-}
+pub use core::selfupdate::{launcher_selfupdate_check, launcher_selfupdate_run};
 
 fn log_line(tag: &str, msg: &str) {
     use std::io::Write;
@@ -119,7 +82,6 @@ pub fn run() {
             log_line("SINGLE-INST", "second instance detected, ignoring");
         }))
         .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(AppState::new())
         .invoke_handler(tauri::generate_handler![
             core::settings::get_settings,
@@ -130,8 +92,6 @@ pub fn run() {
             commands::install::repair_client,
             pause_download,
             resume_download,
-            launcher_update_status,
-            launcher_update_install,
             commands::launch::launch_game,
             commands::server::server_status
         ])

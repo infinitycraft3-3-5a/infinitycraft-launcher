@@ -282,60 +282,68 @@
       </div>
     {/if}
 
-    <div class="panel-status">
-      {#if showDone}
-        <p class="done">Install terminé</p>
-      {/if}
-      {#if phase === "updating" || phase === "repairing"}
-        <div class="progress-wrap">
-          {#if progress}
-            <div class="progress-track">
-              <div class="progress-fill" style="width: {progress.percent}%"></div>
-            </div>
-            <div class="progress-meta">
-              <span>#{progress.file_index + 1}/{progress.file_count} · {progress.file.split("/").slice(-1)[0]}</span>
-              <span class="meta-right">
-                <span>{fmtBytes(progress.bytes_global)} / {fmtBytes(progress.bytes_total)}</span>
-                <span>{progress.percent}%</span>
-                {#if !isPaused}
-                  <span class="speed">▲ {fmtSpeed(progress.speed_bps)}</span>
-                {/if}
-              </span>
-            </div>
-            <div class="progress-actions">
-              <button class="pause-btn" onclick={togglePause}>
-                {#if isPaused}
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Reprendre
-                {:else}
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg> Pause
-                {/if}
-              </button>
-            </div>
-          {:else}
-            <div class="progress-meta">Préparation du téléchargement…</div>
-          {/if}
-        </div>
-      {/if}
+  </div>
+
+  <div class="announce-wrap" aria-label="Annonce du serveur">
+    <div class="announce-box">
+      <div class="announce-box__eyebrow">✦ ANNONCE SERVEUR ✦</div>
+      <div class="announce-box__title">Annonce du jour — à venir</div>
+      <div class="announce-box__body">
+        Maintenance, événements, nouveautés du patch, ou rappel des règles.
+        <em>Emplacement réservé — sera branché sur l'API d'annonce du serveur.</em>
+      </div>
     </div>
   </div>
 
   <div class="hero__bottom">
-    <div class="bottom-left">
-      <button class="wow-btn" disabled={busy} onclick={primaryAction}>
-        {#if phase === "ready"}
-          <svg class="ico" viewBox="0 0 24 24" width="18" height="18"><path d="M6 4l14 8-14 8z" fill="currentColor"/></svg>
-        {:else if phase !== "checking" && phase !== "boot"}
-          <svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13M6 11l6 6 6-6M4 21h16"/></svg>
-        {/if}
-        {label}
-      </button>
-      <button class="ghost-btn" disabled={busy || phase === "launching"} onclick={repair}>Réparer</button>
-    </div>
+    <button class="wow-btn" disabled={busy} onclick={primaryAction}>
+      {#if phase === "ready"}
+        <svg class="ico" viewBox="0 0 24 24" width="18" height="18"><path d="M6 4l14 8-14 8z" fill="currentColor"/></svg>
+      {:else if phase !== "checking" && phase !== "boot"}
+        <svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13M6 11l6 6 6-6M4 21h16"/></svg>
+      {/if}
+      {label}
+    </button>
 
-    <div class="bottom-right">
+    {#if phase === "updating" || phase === "repairing"}
+      <div class="progress-wrap">
+        {#if progress}
+          <div class="progress-track">
+            <div class="progress-fill" style="width: {progress.percent}%"></div>
+          </div>
+          <div class="progress-meta">
+            <span>#{progress.file_index + 1}/{progress.file_count} · {progress.file.split("/").slice(-1)[0]}</span>
+            <span class="meta-right">
+              <span>{fmtBytes(progress.bytes_global)} / {fmtBytes(progress.bytes_total)}</span>
+              <span>{progress.percent}%</span>
+              {#if !isPaused}
+                <span class="speed">▲ {fmtSpeed(progress.speed_bps)}</span>
+              {/if}
+            </span>
+          </div>
+          <div class="progress-actions">
+            <button class="pause-btn" onclick={togglePause}>
+              {#if isPaused}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Reprendre
+              {:else}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg> Pause
+              {/if}
+            </button>
+          </div>
+        {:else}
+          <div class="progress-meta">Préparation du téléchargement…</div>
+        {/if}
+      </div>
+    {/if}
+
+    {#if showDone}
+      <span class="done">Install terminé</span>
+    {/if}
+
+    <div class="right-group">
       {#if check?.up_to_date}
         <span class="status-ico ok" title="Client à jour">
-          <svg viewBox="0 0 24 24" width="22" height="22">
+          <svg viewBox="0 0 24 24" width="20" height="20">
             <circle cx="12" cy="12" r="11" fill="currentColor" opacity=".12"/>
             <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
             <path d="M7.5 12.3l2.8 2.8L16.5 9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -343,7 +351,7 @@
         </span>
       {:else if check}
         <span class="status-ico up" title="Mise à jour disponible · Build {check.server_build}">
-          <svg viewBox="0 0 24 24" width="22" height="22">
+          <svg viewBox="0 0 24 24" width="20" height="20">
             <circle cx="12" cy="12" r="11" fill="currentColor" opacity=".12"/>
             <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
             <path d="M16.8 9.2a5.5 5.5 0 1 0 .8 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -351,6 +359,7 @@
           </svg>
         </span>
       {/if}
+      <button class="ghost-btn" disabled={busy || phase === "launching"} onclick={repair}>Réparer</button>
       <button class="gear-btn" class-active={showSettings} onclick={openSettings} title="Réglages">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="3"/>
@@ -358,7 +367,7 @@
         </svg>
       </button>
     </div>
-
+  </div>
   </section>
 
   {#if showSettings}
@@ -412,11 +421,66 @@
       linear-gradient(180deg, rgba(10,14,21,.45) 0%, rgba(10,14,21,.30) 45%, rgba(10,14,21,.86) 100%);
   }
 
+  .announce-wrap {
+    position: relative; z-index: 2;
+    flex: 0 0 auto; width: 100%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px 64px 30px;
+    box-sizing: border-box;
+  }
+  .announce-box {
+    position: relative;
+    width: 100%; max-width: 720px;
+    text-align: center;
+    padding: 24px 30px 26px;
+    border-top: 1px solid rgba(111,179,255,.22);
+    border-bottom: 1px solid rgba(111,179,255,.22);
+    background:
+      linear-gradient(180deg, rgba(59,127,212,.05) 0%, rgba(59,127,212,.02) 100%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .announce-box::before,
+  .announce-box::after {
+    content: ""; position: absolute; width: 26px; height: 26px;
+    border: 1px solid rgba(242,193,78,.75);
+    pointer-events: none;
+  }
+  .announce-box::before {
+    top: -1px; left: -1px;
+    border-right: none; border-bottom: none;
+    box-shadow: -2px -2px 12px rgba(242,193,78,.18);
+  }
+  .announce-box::after {
+    bottom: -1px; right: -1px;
+    border-left: none; border-top: none;
+    box-shadow: 2px 2px 12px rgba(242,193,78,.18);
+  }
+  .announce-box__eyebrow {
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 11px; letter-spacing: 4px; font-weight: 600;
+    color: #6fb3ff;
+    text-shadow: 0 0 12px rgba(111,179,255,.45);
+  }
+  .announce-box__title {
+    font-family: "Cinzel", "Palatino Linotype", Georgia, serif;
+    font-size: 1.15rem; letter-spacing: .5px; line-height: 1.2;
+    color: #eef2f8; margin: 2px 0 0;
+  }
+  .announce-box__body {
+    color: #b4bdc9; font-size: .88rem; line-height: 1.55; max-width: 500px;
+  }
+  .announce-box__body em {
+    display: block; margin-top: 8px;
+    font-style: italic; font-size: .82rem; color: #7d8794;
+  }
+
   .hero__inner {
     position: relative; z-index: 2;
     text-align: center; margin: 0 auto;
     padding: 14% 24px 18px; max-width: 720px;
     display: flex; flex-direction: column; align-items: center; gap: 14px;
+    zoom: 0.75;
+    transform: translateY(35px);
   }
   .snow { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
   .hero__logo { height: 90px; width: auto; filter: drop-shadow(0 8px 34px rgba(0,0,0,.55)); margin-bottom: 8px; }
@@ -446,10 +510,10 @@
   .dot.off { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
   @keyframes pulse { 50% { opacity: .45; } }
 
-  .panel-status { width: 100%; margin-top: 4px; }
   .done {
-    color: #37d67a; font-size: 13px; margin: 0 0 8px;
+    color: #37d67a; font-size: .85rem; font-weight: 600;
     animation: doneFade 3s ease-in-out forwards;
+    white-space: nowrap;
   }
   @keyframes doneFade {
     0% { opacity: 0; transform: translateY(4px); }
@@ -458,10 +522,13 @@
     100% { opacity: 0; }
   }
 
-  .progress-wrap { margin: 12px auto; max-width: 480px; }
+  .progress-wrap {
+    flex: 1 1 auto; min-width: 220px; max-width: 520px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
   .progress-track { height: 8px; background: #1a1f2e; border: 1px solid #232a44; border-radius: 4px; overflow: hidden; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, #3a5bd9, #6b8cff); transition: width 0.2s; }
-  .progress-meta { display: flex; justify-content: space-between; font-size: 11px; color: #6b7188; margin-top: 6px; gap: 12px; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 11px; color: #6b7188; gap: 12px; }
   .progress-meta span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
   .progress-meta .meta-right { display: inline-flex; gap: 8px; align-items: baseline; margin-left: auto; }
   .progress-meta .speed { color: #86efac; font-family: ui-monospace, Consolas, monospace; }
@@ -476,10 +543,10 @@
 
   .hero__bottom {
     position: relative; z-index: 2;
-    display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
-    padding: 20px 80px 44px 80px; margin-top: auto;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    padding: 20px 60px 44px 60px; margin-top: auto;
   }
-  .bottom-left { display: flex; align-items: center; gap: 12px; }
+  .right-group { display: flex; align-items: center; gap: 10px; }
 
   .wow-btn {
     display: inline-flex; align-items: center; gap: 11px;
@@ -502,10 +569,9 @@
   .ghost-btn:hover:not(:disabled) { color: #e6e8ee; border-color: #5568c9; background: rgba(107,140,255,.08); }
   .ghost-btn:disabled { opacity: .45; cursor: default; }
 
-  .bottom-right { display: flex; align-items: center; gap: 9px; font-size: 12px; color: #7d8794; font-family: ui-monospace, Consolas, monospace; }
-  .bottom-right .status-ico { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; }
-  .bottom-right .status-ico.ok { color: #4ade80; }
-  .bottom-right .status-ico.up { color: #f2c14e; animation: pulse 2s ease-in-out infinite; }
+  .right-group .status-ico { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; }
+  .right-group .status-ico.ok { color: #4ade80; }
+  .right-group .status-ico.up { color: #f2c14e; animation: pulse 2s ease-in-out infinite; }
 
   .gear-btn {
     display: inline-flex; align-items: center; justify-content: center;

@@ -1,7 +1,7 @@
 {
-  "version": "1.0.2",
-  "notes": "Indicateur d'etat du serveur (vert=online / rouge=offline).",
-  "pub_date": "2026-11-05T00:00:00Z",
-  "url": "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/releases/1.0.2/InfinityCraft-Launcher-v1.0.2.exe",
-  "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTazR4bEZRVUM2V0d3YVM3UFJkbyt4R1JyV21UV3FCZmxrck9vQ2VDWWJOM1d4Nmw1Q3U3dGJ6ZzNuNWl3cmtTbi9IVW03L2N2dUN5RXlDcDVIc1NDRjlqbHF5OXR4blFvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkzOTEzNTUwCWZpbGU6SW5maW5pdHlDcmFmdC1MYXVuY2hlci12MS4wLjIuZXhlCXZlcnNpb246MS4wLjIKZjlUaWVZYnBjemdSbFFsRFk3L3BpU0F2V2NzYXQ5dWV4NG5NTVgyT3JmSy9KVXhCVnRrc1hRUGx5dDBUR2tNMlg4ZDAxTndvaFVnRDNLOXpsaEF3QlE9PQo="
+  "version": "1.0.4",
+  "notes": "Auto-update intégré, bloc annonce, barre de progression entre les boutons.",
+  "pub_date": "2026-11-05T23:58:00Z",
+  "url": "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/releases/1.0.4/InfinityCraft_Launcher_v1.0.4.exe",
+  "sha256": "88153304c43bf5c3a77a8805685f2c0af9c15103ae3ddc1c27b2de12468ebf62"
 }
