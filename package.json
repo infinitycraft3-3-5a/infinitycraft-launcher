@@ -1,0 +1,19 @@
+{
+  "name": "infinitycraft-launcher",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pro-grade game launcher (manifest-based, SHA-256 verified, idempotent) - fake workflow for WoW 3.3.5a",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "server": "node server/serve.mjs",
+    "client": "node client/launcher.mjs",
+    "install": "node client/launcher.mjs install",
+    "update": "node client/launcher.mjs update",
+    "verify": "node client/launcher.mjs verify",
+    "launch": "node client/launcher.mjs launch",
+    "status": "node client/launcher.mjs status",
+    "e2e": "node test/e2e.mjs"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,22 @@
+  # Secrets
+.env
+.env.*
+!.env.example
+
+# Tauri updater signing (private key — NEVER commit)
+desktop/infinitycraft-updater.key
+
+  # Builds / out
+  out/
+  desktop/src-tauri/target/
+  desktop/node_modules/
+  desktop/dist/
+  release-build/
+  release/
+
+# OS / IDE
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
+*.log
