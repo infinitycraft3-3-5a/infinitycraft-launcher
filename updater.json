@@ -1,7 +1,7 @@
 {
   "version": "1.0.2",
-  "notes": "Indicateur d'état du serveur (vert=online / rouge=offline).",
+  "notes": "Indicateur d'etat du serveur (vert=online / rouge=offline).",
   "pub_date": "2026-11-05T00:00:00Z",
   "url": "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/releases/1.0.2/InfinityCraft-Launcher-v1.0.2.exe",
-  "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTazR4bEZRVUM2V0VObXVnNi9lUEYxN2I2WjdqN3gvalZkdlBuSVZBSUg4b0xzWCtBZU5zWThBQWhiS3M1R0ZHRVZhaCtlMnpyUVI4cWhSRVpsSFJPanJyVzdGK2xjK1FFPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkzOTEyNDQwCWZpbGU6SW5maW5pdHlDcmFmdC1MYXVuY2hlci12MS4wLjIuZXhlCXZlcnNpb246MS4wLjIKVDdqakJncm5wRnplWmluVFR4NTYyTVdKclUySjdRZ0ZzY0JEeXZER21DUWlGTnY5Q09iY0ZWVC9saHpaYk1qWDBGN3hsUWROVXluQXVzZmcyWXNmQWc9PQo="
+  "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTazR4bEZRVUM2V0d3YVM3UFJkbyt4R1JyV21UV3FCZmxrck9vQ2VDWWJOM1d4Nmw1Q3U3dGJ6ZzNuNWl3cmtTbi9IVW03L2N2dUN5RXlDcDVIc1NDRjlqbHF5OXR4blFvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkzOTEzNTUwCWZpbGU6SW5maW5pdHlDcmFmdC1MYXVuY2hlci12MS4wLjIuZXhlCXZlcnNpb246MS4wLjIKZjlUaWVZYnBjemdSbFFsRFk3L3BpU0F2V2NzYXQ5dWV4NG5NTVgyT3JmSy9KVXhCVnRrc1hRUGx5dDBUR2tNMlg4ZDAxTndvaFVnRDNLOXpsaEF3QlE9PQo="
 }
