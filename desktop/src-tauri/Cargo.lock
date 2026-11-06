@@ -1782,7 +1782,7 @@ dependencies = [
 
 [[package]]
 name = "infinitycraft-launcher"
-version = "1.0.6"
+version = "1.0.7"
 dependencies = [
  "chrono",
  "dirs 5.0.1",

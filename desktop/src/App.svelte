@@ -2,7 +2,8 @@
   import { invoke } from "@tauri-apps/api/core";
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { onMount } from "svelte";
-  import type { Phase, CheckResult, LauncherUpdate } from "./types";
+  import type { Phase, CheckResult, LauncherUpdate, Settings } from "./types";
+  import { normLang, t, type Lang } from "./i18n";
   import Home from "./screens/Home.svelte";
 
   const win = getCurrentWindow();
@@ -10,6 +11,16 @@
   let phase = $state<Phase>("boot");
   let check = $state<CheckResult | null>(null);
   let errorMsg = $state<string | null>(null);
+  let lang = $state<Lang>("fr");
+
+  async function changeLang(code: Lang) {
+    lang = code;
+    try {
+      const cur = await invoke<Settings>("get_settings");
+      await invoke("save_settings", { args: { ...cur, language: code } });
+    } catch {
+    }
+  }
 
   let launcherUpdate = $state<LauncherUpdate | null>(null);
   let updatingLauncher = $state(false);
@@ -61,6 +72,11 @@
   }
 
   onMount(async () => {
+    try {
+      const s = await invoke<Settings>("get_settings");
+      lang = normLang(s.language);
+    } catch {
+    }
     checkLauncherUpdate();
     phase = "checking";
     try {
@@ -73,10 +89,10 @@
 </script>
 
 <div class="winctl">
-  <button class="min" title="Réduire" aria-label="Réduire" onclick={minimize}>
+  <button class="min" title={t(lang, "win_minimize")} aria-label={t(lang, "win_minimize")} onclick={minimize}>
     <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6 H10" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
   </button>
-  <button class="close" title="Fermer" aria-label="Fermer" onclick={close}>
+  <button class="close" title={t(lang, "win_close")} aria-label={t(lang, "win_close")} onclick={close}>
     <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 2 L10 10 M10 2 L2 10" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
   </button>
 </div>
@@ -84,8 +100,8 @@
 {#if launcherUpdate}
   <div class="updater-banner" role="status" aria-live="polite">
     <div class="updater-text">
-      <div class="updater-title">{#if updatingLauncher}Mise à jour du lanceur en cours…{:else}Nouvelle version du lanceur disponible{/if}</div>
-      <div class="updater-sub">Version {launcherUpdate.version} — le lanceur se remplace tout seul, il se relancera ensuite.</div>
+      <div class="updater-title">{#if updatingLauncher}{t(lang, "upd_in_progress")}{:else}{t(lang, "upd_available")}{/if}</div>
+      <div class="updater-sub">{t(lang, "upd_sub", { v: launcherUpdate.version })}</div>
     </div>
     <div class="updater-actions">
       <button
@@ -93,9 +109,9 @@
         onclick={() => runSelfUpdate(launcherUpdate)}
         disabled={updatingLauncher}>
         {#if updatingLauncher}
-          Mise à jour…
+          {t(lang, "upd_cta_busy")}
         {:else}
-          Mettre à jour
+          {t(lang, "upd_cta")}
         {/if}
       </button>
     </div>
@@ -104,7 +120,7 @@
 
 <main class="stage">
   <div class="grip" data-tauri-drag-region aria-hidden="true"></div>
-  <Home {check} {phase} onRefresh={refresh} onError={showError} setPhase={setPhase} />
+  <Home {check} {phase} {lang} onChangeLang={changeLang} onRefresh={refresh} onError={showError} setPhase={setPhase} />
 </main>
 
 {#if phase === "error" && errorMsg}

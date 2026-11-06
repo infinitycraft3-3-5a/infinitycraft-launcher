@@ -4,15 +4,18 @@
   import { open } from "@tauri-apps/plugin-dialog";
   import { onMount, onDestroy } from "svelte";
   import type { CheckResult, ProgressEvent, ServerStatus, Settings } from "../types";
+  import { bytesUnits, LANGS, speedUnits, t, type Lang } from "../i18n";
 
   interface Props {
     check: CheckResult | null;
     phase: string;
+    lang: Lang;
+    onChangeLang: (l: Lang) => void;
     setPhase: (p: string) => void;
     onRefresh: (c: CheckResult) => void;
     onError: (m: string) => void;
   }
-  let { check, phase, setPhase, onRefresh, onError }: Props = $props();
+  let { check, phase, lang, onChangeLang, setPhase, onRefresh, onError }: Props = $props();
 
   // ── Réglages ──
   let showSettings = $state(false);
@@ -39,7 +42,7 @@
   }
 
   async function pickDir() {
-    const d = await open({ directory: true, multiple: false, title: "Dossier d'installation du client" });
+    const d = await open({ directory: true, multiple: false, title: t(lang, "set_install_label") });
     if (typeof d === "string") installDir = d;
   }
 
@@ -160,17 +163,18 @@
   });
 
   function fmtBytes(n: number) {
-    if (!n) return "0 B";
-    const u = ["B", "Ko", "Mo", "Go"];
+    if (!n) return "0 " + bytesUnits(lang)[0];
+    const u = bytesUnits(lang);
     const i = Math.min(u.length - 1, Math.floor(Math.log(n) / Math.log(1024)));
     return (n / Math.pow(1024, i)).toFixed(i ? 1 : 0) + " " + u[i];
   }
 
   function fmtSpeed(bps: number) {
     if (!bps) return "—";
-    if (bps < 1024) return bps + " B/s";
-    if (bps < 1024 * 1024) return (bps / 1024).toFixed(1) + " Ko/s";
-    return (bps / (1024 * 1024)).toFixed(1) + " Mo/s";
+    const u = speedUnits(lang);
+    if (bps < 1024) return bps + " " + u[0];
+    if (bps < 1024 * 1024) return (bps / 1024).toFixed(1) + " " + u[1];
+    return (bps / (1024 * 1024)).toFixed(1) + " " + u[2];
   }
 
   let isPaused = $derived(progress?.paused === true);
@@ -221,10 +225,10 @@
   }
 
   let label = $derived(
-    phase === "ready" ? "Jouer"
-    : phase === "launching" ? "Lancement…"
-    : check && !check.up_to_date ? "Installer / Mettre à jour"
-    : "Installer");
+    phase === "ready" ? t(lang, "btn_play")
+    : phase === "launching" ? t(lang, "btn_launching")
+    : check && !check.up_to_date ? t(lang, "btn_install_update")
+    : t(lang, "btn_install"));
 </script>
 
 <section class="hero">
@@ -235,38 +239,33 @@
   <div class="hero__inner">
     <img class="hero__logo" src="/LOGO-InfinityCraft.png" alt="InfinityCraft"/>
 
-    <h1 class="hero__title">The realm that never sleeps.</h1>
-
-    <p class="hero__lede">
-      InfinityCraft is a WoW private server, tuned to feel like the classic
-      <span class="mono">3.3.5a</span> days with some custom content to update whats already good. No lag, no bots.
-    </p>
+    <h1 class="hero__title">{t(lang, "tagline")}</h1>
 
   <div class="status">
     {#if phase === "checking" || phase === "boot"}
-      <span class="dot check"></span> Vérification du client…
+      <span class="dot check"></span> {t(lang, "st_checking")}
     {:else if phase === "install"}
       <span class="dot check"></span>
-      Client non installé · {fmtBytes(check?.to_download_bytes ?? 0)} à télécharger
+      {t(lang, "st_not_installed", { b: fmtBytes(check?.to_download_bytes ?? 0) })}
     {:else if phase === "updating" || phase === "repairing"}
          <span class="dot check"></span>
          {#if isPaused}
-           En pause · {fmtBytes(progress?.bytes_global ?? 0)} / {fmtBytes(progress?.bytes_total ?? check?.to_download_bytes ?? 0)}
+           {t(lang, "st_paused", { d: fmtBytes(progress?.bytes_global ?? 0), t: fmtBytes(progress?.bytes_total ?? check?.to_download_bytes ?? 0) })}
          {:else if progress?.phase === "mpqs"}
-           Téléchargement des MPQs…
+           {t(lang, "st_mpqs")}
          {:else}
-           Téléchargement…
+           {t(lang, "st_downloading")}
          {/if}
       {:else if phase === "launching"}
-        <span class="dot ok"></span> Lancement d'InfinityCraft…
+        <span class="dot ok"></span> {t(lang, "st_launching")}
       {:else if phase === "error"}
-        <span class="dot off"></span> Vérification impossible
+        <span class="dot off"></span> {t(lang, "st_check_error")}
       {:else if check}
         <span class="dot ok"></span>
         {#if check.up_to_date}
-          Client prêt à jouer
+          {t(lang, "st_ready")}
         {:else}
-          {check.missing_mpqs.length} MPQ(s) manquants · {fmtBytes(check.to_download_bytes)} à télécharger
+          {t(lang, "st_missing", { n: check.missing_mpqs.length, b: fmtBytes(check.to_download_bytes) })}
         {/if}
       {/if}
     </div>
@@ -275,22 +274,22 @@
       <div class="status" class:server-off={!serverStatus.online}
         title={(serverStatus.online ? "" : (serverStatus.error ?? "")) + " (" + serverStatus.host + ":" + serverStatus.port + ")"}>
         {#if serverStatus.online}
-          <span class="dot ok"></span> Serveur en ligne{#if serverStatus.latency_ms !== null} · {serverStatus.latency_ms} ms{/if}
+          <span class="dot ok"></span> {t(lang, "srv_online")}{#if serverStatus.latency_ms !== null} · {serverStatus.latency_ms} ms{/if}
         {:else}
-          <span class="dot off"></span> Serveur hors ligne
+          <span class="dot off"></span> {t(lang, "srv_offline")}
         {/if}
       </div>
     {/if}
 
   </div>
 
-  <div class="announce-wrap" aria-label="Annonce du serveur">
+  <div class="announce-wrap" aria-label={t(lang, "ann_aria")}>
     <div class="announce-box">
-      <div class="announce-box__eyebrow">✦ ANNONCE SERVEUR ✦</div>
-      <div class="announce-box__title">Annonce du jour — à venir</div>
+      <div class="announce-box__eyebrow">{t(lang, "ann_eyebrow")}</div>
+      <div class="announce-box__title">{t(lang, "ann_title")}</div>
       <div class="announce-box__body">
-        Maintenance, événements, nouveautés du patch, ou rappel des règles.
-        <em>Emplacement réservé — sera branché sur l'API d'annonce du serveur.</em>
+        {t(lang, "ann_body")}
+        <em>{t(lang, "ann_body2")}</em>
       </div>
     </div>
   </div>
@@ -323,24 +322,24 @@
           <div class="progress-actions">
             <button class="pause-btn" onclick={togglePause}>
               {#if isPaused}
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Reprendre
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> {t(lang, "act_resume")}
               {:else}
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg> Pause
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg> {t(lang, "act_pause")}
               {/if}
             </button>
           </div>
         {:else}
-          <div class="progress-meta">Préparation du téléchargement…</div>
+          <div class="progress-meta">{t(lang, "st_preparing")}</div>
         {/if}
     </div>
 
     {#if showDone}
-      <span class="done">Install terminé</span>
+      <span class="done">{t(lang, "st_done")}</span>
     {/if}
 
     <div class="right-group">
       {#if check?.up_to_date}
-        <span class="status-ico ok" title="Client à jour">
+        <span class="status-ico ok" title={t(lang, "ico_uptodate")}>
           <svg viewBox="0 0 24 24" width="20" height="20">
             <circle cx="12" cy="12" r="11" fill="currentColor" opacity=".12"/>
             <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
@@ -348,7 +347,7 @@
           </svg>
         </span>
       {:else if check}
-        <span class="status-ico up" title="Mise à jour disponible · Build {check.server_build}">
+        <span class="status-ico up" title={t(lang, "ico_update", { n: check.server_build })}>
           <svg viewBox="0 0 24 24" width="20" height="20">
             <circle cx="12" cy="12" r="11" fill="currentColor" opacity=".12"/>
             <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
@@ -357,8 +356,8 @@
           </svg>
         </span>
       {/if}
-      <button class="ghost-btn" disabled={busy || phase === "launching"} onclick={repair}>Réparer</button>
-      <button class="gear-btn" class-active={showSettings} onclick={openSettings} title="Réglages">
+      <button class="ghost-btn" disabled={busy || phase === "launching"} onclick={repair}>{t(lang, "btn_repair")}</button>
+      <button class="gear-btn" class-active={showSettings} onclick={openSettings} title={t(lang, "set_title")}>
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="3"/>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -372,15 +371,25 @@
     <div class="settings-overlay" onclick={closeSettings}>
       <div class="settings-panel" onclick={(e) => e.stopPropagation()}>
         <div class="settings-head">
-          <h3>Réglages</h3>
-          <button class="close-x" onclick={closeSettings} aria-label="Fermer">✕</button>
+          <h3>{t(lang, "set_title")}</h3>
+          <button class="close-x" onclick={closeSettings} aria-label={t(lang, "win_close")}>✕</button>
         </div>
 
         <div class="field">
-          <label>Dossier d'installation du client</label>
+          <label for="langSelect">{t(lang, "set_lang_label")}</label>
+          <select id="langSelect" value={lang}
+            onchange={(e) => onChangeLang((e.target as HTMLSelectElement).value as Lang)}>
+            {#each LANGS as l}
+              <option value={l.code}>{l.label}</option>
+            {/each}
+          </select>
+        </div>
+
+        <div class="field">
+          <label>{t(lang, "set_install_label")}</label>
           <div class="field-row">
             <input type="text" bind:value={installDir} spellcheck="false"/>
-            <button class="btn-pick" onclick={pickDir}>Parcourir…</button>
+            <button class="btn-pick" onclick={pickDir}>{t(lang, "btn_browse")}</button>
           </div>
         </div>
 
@@ -388,12 +397,12 @@
           <p class="err">{settingsErr}</p>
         {/if}
         {#if saved}
-          <p class="saved-ok">Enregistré ✓</p>
+          <p class="saved-ok">{t(lang, "set_saved")}</p>
         {/if}
 
         <div class="settings-actions">
-          <button class="ghost-btn" onclick={closeSettings}>Annuler</button>
-          <button class="wow-btn small" onclick={saveSettings}>Enregistrer</button>
+          <button class="ghost-btn" onclick={closeSettings}>{t(lang, "btn_cancel")}</button>
+          <button class="wow-btn small" onclick={saveSettings}>{t(lang, "btn_save")}</button>
         </div>
       </div>
     </div>
@@ -488,9 +497,6 @@
     background: linear-gradient(180deg, #f7f9fc 0%, #dce2ea 45%, #a4adba 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent; margin: 0;
   }
-  .hero__lede { text-align: center; color: #b4bdc9; margin: 0; font-size: 1.1rem; line-height: 1.55; }
-  .mono { font-family: ui-monospace, Consolas, monospace; color: #6fb3ff; }
-
   .status {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 6px 14px; border-radius: 999px;
@@ -608,6 +614,12 @@
 
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 12px; color: #8f98a8; margin-bottom: 6px; font-weight: 500; letter-spacing: .3px; }
+  .field select {
+    width: 100%; box-sizing: border-box;
+    background: #0c1017; border: 1px solid #2c3644; color: #e6e8ee;
+    padding: 9px 11px; border-radius: 7px; font-size: 13px;
+  }
+  .field select:focus { outline: none; border-color: #5568c9; box-shadow: 0 0 0 2px rgba(85,104,201,.25); }
   .field input[type="text"], .field input[type="password"] {
     width: 100%; box-sizing: border-box;
     background: #0c1017; border: 1px solid #2c3644; color: #e6e8ee;

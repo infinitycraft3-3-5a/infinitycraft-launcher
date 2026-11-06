@@ -1,6 +1,6 @@
 [package]
 name = "infinitycraft-launcher"
-version = "1.0.5"
+version = "1.0.7"
 description = "InfinityCraft Launcher (Tauri 2 backend)"
 authors = ["InfinityCraft"]
 edition = "2021"

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "InfinityCraft",
-  "mainBinaryName": "InfinityCraft_Launcher_v1.0.5",
-  "version": "1.0.5",
+  "mainBinaryName": "InfinityCraft_Launcher_v1.0.7",
+  "version": "1.0.7",
   "identifier": "app.infinitycraft.launcher",
   "build": {
     "beforeDevCommand": "npm run dev",
