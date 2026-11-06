@@ -11,7 +11,7 @@
   let phase = $state<Phase>("boot");
   let check = $state<CheckResult | null>(null);
   let errorMsg = $state<string | null>(null);
-  let lang = $state<Lang>("fr");
+  let lang = $state<Lang>("en");
 
   async function changeLang(code: Lang) {
     lang = code;

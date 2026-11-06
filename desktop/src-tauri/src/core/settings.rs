@@ -24,6 +24,10 @@ pub struct Settings {
     pub server_host: String,
     #[serde(default = "def_server_port")]
     pub server_port: u16,
+    #[serde(default = "def_announce_url")]
+    pub announce_url: String,
+    #[serde(default = "def_announce_board")]
+    pub announce_board: String,
     #[serde(default)]
     pub version_json_url: String,
     #[serde(default)]
@@ -34,7 +38,7 @@ fn def_true() -> bool {
     true
 }
 fn def_lang() -> String {
-    "frFR".into()
+    "enUS".into()
 }
 fn def_owner() -> String {
     "infinitycraft3-3-5a".into()
@@ -51,6 +55,12 @@ fn def_server_host() -> String {
 fn def_server_port() -> u16 {
     3724
 }
+fn def_announce_url() -> String {
+    "http://localhost/wp-json/wp/v2/ic_forum_topic".into()
+}
+fn def_announce_board() -> String {
+    "events".into()
+}
 fn def_install() -> String {
     "C:\\Program Files\\InfinityCraft 3.3.5a".into()
 }
@@ -61,13 +71,15 @@ impl Default for Settings {
             install_dir: def_install(),
             clear_cache: true,
             auto_update: true,
-            language: "frFR".into(),
+            language: "enUS".into(),
             owner: def_owner(),
             repo: def_repo(),
             tag_hint: String::new(),
             realmline: def_realmline(),
             server_host: def_server_host(),
             server_port: def_server_port(),
+            announce_url: def_announce_url(),
+            announce_board: def_announce_board(),
             version_json_url: String::new(),
             github_token: String::new(),
         }

@@ -82,8 +82,18 @@ export interface Settings {
   realmline: string;
   server_host: string;
   server_port: number;
+  announce_url: string;
+  announce_board: string;
   version_json_url: string;
   github_token: string;
+}
+
+export interface Announcement {
+  id: number;
+  title: string;
+  link: string;
+  date: string;
+  excerpt: string;
 }
 
 export interface ServerStatus {

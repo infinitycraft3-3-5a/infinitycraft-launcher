@@ -3,7 +3,7 @@
   import { listen } from "@tauri-apps/api/event";
   import { open } from "@tauri-apps/plugin-dialog";
   import { onMount, onDestroy } from "svelte";
-  import type { CheckResult, ProgressEvent, ServerStatus, Settings } from "../types";
+  import type { Announcement, CheckResult, ProgressEvent, ServerStatus, Settings } from "../types";
   import { bytesUnits, LANGS, speedUnits, t, type Lang } from "../i18n";
 
   interface Props {
@@ -64,6 +64,7 @@
   let showDone = $state(false);
   let doneTimer: ReturnType<typeof setTimeout> | undefined;
   let serverStatus = $state<ServerStatus | null>(null);
+  let announce = $state<Announcement | null>(null);
   let busy = $derived(
     phase === "checking" ||
     phase === "updating" || phase === "repairing" || phase === "launching"
@@ -73,6 +74,10 @@
     showDone = true;
     if (doneTimer) clearTimeout(doneTimer);
     doneTimer = setTimeout(() => { showDone = false; }, 3000);
+  }
+
+  function openAnnounce() {
+    if (announce) invoke("open_announcement", { url: announce.link }).catch(() => {});
   }
 
   let unlisten: (() => void) | null = null;
@@ -90,6 +95,11 @@
     }
     await pollServer();
     serverTimer = setInterval(pollServer, 15000);
+    try {
+      announce = await invoke<Announcement | null>("fetch_announcement");
+    } catch {
+      announce = null;
+    }
   });
   onDestroy(() => {
     if (unlisten) unlisten();
@@ -286,11 +296,20 @@
   <div class="announce-wrap" aria-label={t(lang, "ann_aria")}>
     <div class="announce-box">
       <div class="announce-box__eyebrow">{t(lang, "ann_eyebrow")}</div>
-      <div class="announce-box__title">{t(lang, "ann_title")}</div>
-      <div class="announce-box__body">
-        {t(lang, "ann_body")}
-        <em>{t(lang, "ann_body2")}</em>
-      </div>
+      {#if announce}
+        <div class="announce-box__title">{announce.title}</div>
+        <div class="announce-box__body">
+          {announce.excerpt}
+          <em class="announce-box__date">{announce.date.slice(0, 10)}</em>
+        </div>
+        <button class="announce-link" onclick={openAnnounce}>{t(lang, "ann_forum_link")}</button>
+      {:else}
+        <div class="announce-box__title">{t(lang, "ann_title")}</div>
+        <div class="announce-box__body">
+          {t(lang, "ann_body")}
+          <em>{t(lang, "ann_body2")}</em>
+        </div>
+      {/if}
     </div>
   </div>
 
@@ -475,6 +494,19 @@
   }
   .announce-box__body {
     color: #b4bdc9; font-size: .88rem; line-height: 1.55; max-width: 500px;
+  }
+  .announce-box__date {
+    display: block; margin-top: 6px;
+    font-style: normal; font-size: .78rem; color: #6b7188;
+  }
+  .announce-link {
+    margin-top: 8px; align-self: flex-start;
+    background: none; border: 1px solid #5568c9; border-radius: 6px;
+    color: #9db4ff; font-size: 12px; letter-spacing: 1px;
+    padding: 4px 12px; cursor: pointer;
+  }
+  .announce-link:hover {
+    background: rgba(107,140,255,.12); color: #e6e8ee;
   }
   .announce-box__body em {
     display: block; margin-top: 8px;

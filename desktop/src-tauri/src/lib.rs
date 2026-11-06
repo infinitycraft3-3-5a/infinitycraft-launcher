@@ -95,7 +95,9 @@ pub fn run() {
             launcher_selfupdate_check,
             launcher_selfupdate_run,
             commands::launch::launch_game,
-            commands::server::server_status
+            commands::server::server_status,
+            commands::announce::fetch_announcement,
+            commands::announce::open_announcement
         ])
         .on_window_event(|_win, event| match event {
             tauri::WindowEvent::CloseRequested { .. } => {
