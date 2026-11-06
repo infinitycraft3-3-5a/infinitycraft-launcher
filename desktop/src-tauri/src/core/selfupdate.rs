@@ -1,5 +1,6 @@
 use serde::Deserialize;
 use std::path::PathBuf;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use futures_util::StreamExt;
 use tokio::io::AsyncWriteExt;
@@ -7,6 +8,14 @@ use tokio::io::AsyncWriteExt;
 /// URL du manifest de mise à jour du lanceur (EXE brut + sha256).
 const MANIFEST_URL: &str =
     "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/updater.json";
+
+/// Paramètre anti-cache CDN : force le edge du CDN à re-servir le fichier frais après un push.
+fn cache_bust() -> u64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0)
+}
 
 #[derive(Debug, Clone, Deserialize)]
 struct Manifest {
@@ -56,8 +65,9 @@ pub async fn launcher_selfupdate_check() -> Result<SelfupdateInfo, String> {
         .map_err(|e| e.to_string())?;
 
     let res = client
-        .get(MANIFEST_URL)
+        .get(format!("{MANIFEST_URL}?cb={}", cache_bust()))
         .header("User-Agent", "InfinityCraft-Launcher")
+        .header("Cache-Control", "no-cache")
         .send()
         .await
         .map_err(|e| format!("manifest fetch failed: {e}"))?;
@@ -90,7 +100,7 @@ pub async fn launcher_selfupdate_check() -> Result<SelfupdateInfo, String> {
 /// puis termine le process courant.
 #[tauri::command]
 pub async fn launcher_selfupdate_run(info: SelfupdateInfo) -> Result<(), String> {
-    let url = info.url.trim().to_string();
+    let url = format!("{}?cb={}", info.url.trim(), cache_bust());
     if url.is_empty() {
         return Err("URL de mise à jour vide".into());
     }

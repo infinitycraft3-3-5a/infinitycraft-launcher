@@ -1,7 +1,7 @@
 {
-    "url":  "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/releases/1.0.7/InfinityCraft_Launcher_v1.0.7.exe",
-    "sha256":  "1d1e7466b6b806b92486d3135c7f373a1719a9d99556fabd47ab942e21a11ee1",
-    "pub_date":  "2026-11-06T19:00:00Z",
-    "version":  "1.0.7",
-    "notes":  "Interface 100% traduite (7 langues : EN/FR/IT/DE/ES/PL/RU) + sélecteur de langue dans les réglages. Paragraphe d'intro du hero retiré."
+    "url":  "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/releases/1.0.8/InfinityCraft_Launcher_v1.0.8.exe",
+    "sha256":  "24ba7e846f8002e2dc026007d6b74cb95f753fe8237324c627cb35b5ed0b3db1",
+    "pub_date":  "2026-11-06T20:30:00Z",
+    "version":  "1.0.8",
+    "notes":  "Auto-update durci : anti-cache CDN (?cb=) sur le manifest et le telechargement de l'exe, plus de delai de detection apres un push."
 }
