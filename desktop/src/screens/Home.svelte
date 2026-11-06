@@ -261,6 +261,8 @@
          <span class="dot check"></span>
          {#if isPaused}
            {t(lang, "st_paused", { d: fmtBytes(progress?.bytes_global ?? 0), t: fmtBytes(progress?.bytes_total ?? check?.to_download_bytes ?? 0) })}
+         {:else if progress?.phase === "verify"}
+           {t(lang, "st_verifying")}
          {:else if progress?.phase === "mpqs"}
            {t(lang, "st_mpqs")}
          {:else}
@@ -586,18 +588,39 @@
   .right-group { display: flex; align-items: center; gap: 10px; }
 
   .wow-btn {
-    display: inline-flex; align-items: center; gap: 11px;
-    padding: 14px 30px;
-    background: linear-gradient(180deg, #2f47b0 0%, #243a86 48%, #1b2c66 100%);
-    border: 1px solid #5568c9; color: #fff; font-size: 17px; font-weight: 700;
-    letter-spacing: .4px; border-radius: 8px; cursor: pointer;
-    box-shadow: 0 8px 26px rgba(40,63,150,.45), inset 0 1px 0 rgba(255,255,255,.25);
-    transition: filter .15s, transform .05s;
+    position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 16px 34px;
+    background: linear-gradient(180deg, #7cc4ff 0%, #4da6ff 55%, #0e5bb8 100%);
+    border: 1px solid rgba(126,192,255,.82); color: #1a1205; font-size: 17px; font-weight: 600;
+    letter-spacing: .3px; border-radius: 8px; cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.42), 0 0 12px rgba(77,166,255,.3);
+    transition: transform .2s cubic-bezier(.4,0,.2,1), border-color .2s cubic-bezier(.4,0,.2,1), box-shadow .2s cubic-bezier(.4,0,.2,1);
   }
-  .wow-btn:hover:not(:disabled) { filter: brightness(1.16); }
-  .wow-btn:active:not(:disabled) { transform: translateY(1px); }
+  .wow-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.06) 0%, transparent 50%);
+    opacity: 0; transition: opacity .2s cubic-bezier(.4,0,.2,1); pointer-events: none;
+  }
+  .wow-btn::after {
+    content: '';
+    position: absolute;
+    top: -60%; bottom: -60%; left: -45%; width: 34%;
+    transform: translateX(-180%) rotate(25deg);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.72), transparent);
+    pointer-events: none;
+  }
+  .wow-btn:hover:not(:disabled) {
+    transform: translateY(-2px) scale(1.025);
+    border-color: #d8f1ff;
+    box-shadow: 0 0 0 1px rgba(126,192,255,.6), 0 0 20px rgba(77,166,255,.55), 0 0 34px rgba(36,133,255,.35), inset 0 1px 0 rgba(255,255,255,.6);
+  }
+  .wow-btn:hover:not(:disabled)::before { opacity: 1; }
+  .wow-btn:hover:not(:disabled)::after { transform: translateX(520%) rotate(25deg); transition: transform 650ms cubic-bezier(.2,.7,.2,1); }
+  .wow-btn:active:not(:disabled) { transform: translateY(0) scale(.96); }
   .wow-btn:disabled { opacity: .55; cursor: default; }
-  .wow-btn .ico { color: #ffe9a8; }
+  .wow-btn:disabled::after { display: none; }
+  .wow-btn .ico { color: inherit; }
 
   .ghost-btn {
     padding: 14px 20px; background: rgba(255,255,255,.04); border: 1px solid #2c3644;

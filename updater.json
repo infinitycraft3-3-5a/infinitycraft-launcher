@@ -1,7 +1,7 @@
 {
-    "url":  "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/releases/1.0.9/InfinityCraft_Launcher_v1.0.9.exe",
-    "sha256":  "83a21e888366fcb06e51091936d47104362a6f3c8396fd52e3dfdfaae915e0a5",
-    "pub_date":  "2026-11-06T21:30:00Z",
-    "version":  "1.0.9",
-    "notes":  "Annonce du jour connectee au forum (board events, date d'evenement la plus recente, lien Lire sur le forum). Langue par defaut : anglais."
+    "url":  "https://raw.githubusercontent.com/infinitycraft3-3-5a/infinitycraft-launcher/main/releases/1.1.0/InfinityCraft_Launcher_v1.1.0.exe",
+    "sha256":  "0f18cb8a5f484e846192c00c63824fef0d5e3d96b3ae0292e8379e30533094bb",
+    "pub_date":  "2026-11-06T23:30:00Z",
+    "version":  "1.1.0",
+    "notes":  "Bouton Play aligne sur la DA du site (bleu + reflet glissant au survol). Passe de reparation automatique : verification SHA256 des MPQs deja presents avant tout telechargement."
 }

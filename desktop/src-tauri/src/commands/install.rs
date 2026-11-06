@@ -218,7 +218,7 @@ pub async fn repair_client(
 async fn run_install(
     app: AppHandle,
     state: State<'_, crate::AppState>,
-    force: bool,
+    _force: bool,
 ) -> Result<InstallResult, String> {
     let settings = state.settings();
     let install_dir = settings.install_dir();
@@ -421,40 +421,38 @@ async fn run_install(
         }
     }
 
-    // MPQs à vérifier par hachage en parallèle (mode réparation uniquement) :
-    // présents sur disque, non validés par le state, taille conforme au
-    // manifeste. Les absents ou à taille faussée vont directement au
-    // téléchargement (une ré-écriture a la même probabilité d'échec que
-    // le téléchargement du fichier).
-    let mpq_need_verify: Vec<(version::Patch, PathBuf, u64)> = if force {
-        vj.patches
-            .iter()
-            .filter_map(|patch| {
-                if clean_targets.contains(&patch.target) {
-                    return None;
-                }
-                let dest = install_dir.join(patch.target.replace('/', "\\"));
-                if !dest.is_file() {
-                    return None;
-                }
-                let expected: u64 = patch.parts.iter().map(|p| p.size).sum();
-                if dest.metadata().is_ok_and(|m| m.len() != expected) {
-                    return None;
-                }
-                Some((patch.clone(), dest, expected))
-            })
-            .collect()
-    } else {
-        Vec::new()
-    };
+    // Passe de réparation systématique : tout MPQ présent sur disque, non
+    // validé par le state et de taille conforme au manifeste est vérifié par
+    // hachage AVANT tout téléchargement. S'il est valide, il est enregistré
+    // dans le state et le téléchargement est évité. Les absents ou à taille
+    // faussée vont directement au téléchargement (une ré-écriture a la même
+    // probabilité d'échec que le téléchargement du fichier).
+    let mpq_need_verify: Vec<(version::Patch, PathBuf, u64)> = vj
+        .patches
+        .iter()
+        .filter_map(|patch| {
+            if clean_targets.contains(&patch.target) {
+                return None;
+            }
+            let dest = install_dir.join(patch.target.replace('/', "\\"));
+            if !dest.is_file() {
+                return None;
+            }
+            let expected: u64 = patch.parts.iter().map(|p| p.size).sum();
+            if dest.metadata().is_ok_and(|m| m.len() != expected) {
+                return None;
+            }
+            Some((patch.clone(), dest, expected))
+        })
+        .collect();
     let mut mpqs_verified: u32 = 0;
-    if force && !mpq_need_verify.is_empty() {
+    if !mpq_need_verify.is_empty() {
         let mpq_need_verify_total = mpq_need_verify.len();
         emit_phase(
             &app,
-            "mpqs",
+            "verify",
             &format!(
-                "Vérification des {} MPQs (SHA256, en parallèle)…",
+                "Réparation : vérification des {} MPQs déjà présents (SHA256, en parallèle)…",
                 mpq_need_verify.len()
             ),
         );
@@ -484,19 +482,19 @@ async fn run_install(
                     // copiée manuellement) devient désormais connue du lanceur.
                     store.record_mpq(&patch.target, &patch.sha256, expected);
                     mpqs_verified += 1;
-                    emit_phase(&app, "mpqs", &format!("{} ✓ vérifié", patch.file));
+                    emit_phase(&app, "verify", &format!("{} ✓ vérifié", patch.file));
                 }
                 Ok(Err(e)) => {
-                    emit_phase(&app, "mpqs", &format!("→ ré-écriture : {e}"));
+                    emit_phase(&app, "verify", &format!("→ ré-écriture : {e}"));
                 }
                 Err(e) => {
-                    emit_phase(&app, "mpqs", &format!("tâche de vérification a échoué : {e}"));
+                    emit_phase(&app, "verify", &format!("tâche de vérification a échoué : {e}"));
                 }
             }
         }
         emit_phase(
             &app,
-            "mpqs",
+            "verify",
             &format!(
                 "{} MPQ validé(s) par hachage sur {} à vérifier.",
                 mpqs_verified,
